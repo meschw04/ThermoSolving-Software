@@ -1,3 +1,4 @@
+
 # container, 29 ft high.
 # 25 feet of it is liquid benzene, sg~.875 g/cm
 # N2 occupies the rest, pressure is 300 psi. 1.02 atm ambient.
@@ -9,80 +10,108 @@
 # SG Table
 # Water tables
 # BP MP of stuff
-import csv
+
 import Tkinter as tk
+import thermo_parse_files
 
 # PV = nRT
 R = .0820574614 #(L*atm)/(mol*K) are the units!
 
-
-gas_elements=[]
-f = csv.reader(open("/Users/mschwart/Documents/Thermo_Program/Gas_Elements.csv", "rU"), dialect=csv.excel_tab)
-for row in f:
-    gas_elements.append(row[0].split(","))
-for i in gas_elements:
-    if i[1].find('0') != -1:
-        i[1]=i[1].replace(i[1][i[1].find('0')],u'\u2080')
-    if i[1].find('1') != -1:
-        i[1]=i[1].replace(i[1][i[1].find('1')],u'\u2081')
-    if i[1].find('2') != -1:
-        i[1]=i[1].replace(i[1][i[1].find('2')],u'\u2082')
-    if i[1].find('3') != -1:
-        i[1]=i[1].replace(i[1][i[1].find('3')],u'\u2083')
-    if i[1].find('4') != -1:
-        i[1]=i[1].replace(i[1][i[1].find('4')],u'\u2084')
-    if i[1].find('5') != -1:
-        i[1]=i[1].replace(i[1][i[1].find('5')],u'\u2085')
-    if i[1].find('6') != -1:
-        i[1]=i[1].replace(i[1][i[1].find('6')],u'\u2086')
-    if i[1].find('7') != -1:
-        i[1]=i[1].replace(i[1][i[1].find('7')],u'\u2087')
-    if i[1].find('8') != -1:
-        i[1]=i[1].replace(i[1][i[1].find('8')],u'\u2088')
-    if i[1].find('9') != -1:
-        i[1]=i[1].replace(i[1][i[1].find('9')],u'\u2089')
-    if i[0].find('_') != -1:
-        i[0]=i[0].replace(i[0][i[0].find('_')],',')
-
-gas_mass=[]
-gas_compounds=[]
-for i in gas_elements:
-    gas_compounds.append(i[0] + ' == ' + i[1])
-    gas_mass.append(float(i[2]))
-gas_compounds = tuple(gas_compounds)
+gas_compounds = thermo_parse_files.parse_gas_compounds("/Users/mschwart/ThermoSolving-Software/Gas_Elements.csv")
+#NOTE: Come back to this, you will eventually want to change this so that it doesn't have to take the file path.
+#This way, it can work on any computer and not just yours with the specific file path. Good luck!
 
 
 root = tk.Tk()
 
 class Principal(tk.Tk):
 
+    ####################################################################################################################
+    ################################################# MAIN MENU LAYOUT #################################################
+    ####################################################################################################################
+
+
     def __init__(self, *args, **kwargs):
-        root.title("Thermodynamics Solver")
-        box_title = tk.Label(text="This solves for Ideal Gas Law.")
+        root.title("ThermoSolving Software")
+        self.main_label = tk.Label(root,text='Themodynamics Main Window')
+        self.main_label.grid(row=0,column=0)
+        
+        self.species_database_button = tk.Button(root,text="Add Species to Database",command=self.species_database)
+        self.species_database_button.config(width=30)
+        self.species_database_button.grid(row=1,column=0)
+        
+        self.ideal_gas_button = tk.Button(root,text="Ideal Gas Law",command=self.ideal_gas_law)
+        self.ideal_gas_button.config(width=30)
+        self.ideal_gas_button.grid(row=2,column=0)
+
+        self.saturation_pressure_calc = tk.Button(root, text='Saturation Pressure Solver',command=self.sat_pressure_calc)
+        self.saturation_pressure_calc.config(width=30)
+        self.saturation_pressure_calc.grid(row=3,column=0)
+        
+        self.equation_of_state_solver = tk.Button(root, text='Equation of State Solver',command=self.eos_solver)
+        self.equation_of_state_solver.config(width=30)
+        self.equation_of_state_solver.grid(row=4,column=0)
+        
+        self.fugacity_coeff_solver = tk.Button(root, text='Fugacity Coefficient Solver',command=self.fug_coeff_solver)
+        self.fugacity_coeff_solver.config(width=30)
+        self.fugacity_coeff_solver.grid(row=5,column=0)
+        
+        self.parameter_fitting = tk.Button(root,text='Models/Fittings for Excess Gibbs Energy',command=self.xs_gibbs)
+        self.parameter_fitting.config(width=30)
+        self.parameter_fitting.grid(row=6,column=0)
+        
+        self.bubble_dew_point_calcs = tk.Button(root,text='Bubble/Dew Point Calculations',command=self.bubble_dew_point)
+        self.bubble_dew_point_calcs.config(width=30)
+        self.bubble_dew_point_calcs.grid(row=7,column=0)
+        
+        self.chemical_reaction_equilibria = tk.Button(root,text='Chemical Reaction Equilibria',command=self.chem_rxn_equil)
+        self.chemical_reaction_equilibria.config(width=30)
+        self.chemical_reaction_equilibria.grid(row=8,column=0)
+
+
+    ####################################################################################################################
+    ################################################# SPECIES DATABASE #################################################
+    ####################################################################################################################
+
+
+
+    def species_database(self):
+        return
+        
+
+
+    ###################################################################################################################
+    ################################################## IDEAL GAS LAW ##################################################
+    ###################################################################################################################        
+        
+    def ideal_gas_law(self):
+        self.ideal_gas_window = tk.Toplevel(root)
+        self.ideal_gas_window.title("Ideal Gas Solver")
+        box_title = tk.Label(self.ideal_gas_window,text="This solves for Ideal Gas Law.")
         box_title.grid(row=0,column=0,columnspan=2)
         
         #Pressure Input
-        self.P_label = tk.Label(text="Enter Pressure:")
+        self.P_label = tk.Label(self.ideal_gas_window,text="Enter Pressure:")
         self.P_label.grid(row=1,column=0)
         self.P_input = tk.StringVar()
-        self.P_entry = tk.Entry(root,textvariable=self.P_input,width=15)
+        self.P_entry = tk.Entry(self.ideal_gas_window,textvariable=self.P_input,width=15)
         self.P_entry.grid(row=1,column=1)
         pressure_units = ('atm','psi','mm Hg','kPa','Pa','torr','lbs/ft'+u'\u00b2','Inch Hg')
         self.P_unit = tk.StringVar()
-        self.P_units_options = tk.OptionMenu(root, self.P_unit,*pressure_units)
+        self.P_units_options = tk.OptionMenu(self.ideal_gas_window, self.P_unit,*pressure_units)
         self.P_units_options.config(width=8)
         self.P_units_options.grid(row=1,column=2)
         self.P_unit.set('atm')
 
         #Temperature Input
-        self.T_label = tk.Label(text="Enter Temperature:")
+        self.T_label = tk.Label(self.ideal_gas_window,text="Enter Temperature:")
         self.T_label.grid(row=2,column=0)
         self.T_input = tk.StringVar()
-        self.T_entry = tk.Entry(root,textvariable=self.T_input,width=15)
+        self.T_entry = tk.Entry(self.ideal_gas_window,textvariable=self.T_input,width=15)
         self.T_entry.grid(row=2,column=1)
         temperature_units = ('K','R',u'\N{DEGREE SIGN}'+'C',u'\N{DEGREE SIGN}'+'F')
         self.T_unit = tk.StringVar()
-        self.T_units_options = tk.OptionMenu(root, self.T_unit,*temperature_units)
+        self.T_units_options = tk.OptionMenu(self.ideal_gas_window, self.T_unit,*temperature_units)
         self.T_units_options.config(width=8)
         self.T_units_options.grid(row=2,column=2)
         self.T_unit.set('K')
@@ -90,35 +119,35 @@ class Principal(tk.Tk):
 
 
         #Number of Moles Input
-        self.n_label = tk.Label(text="Enter Amount of Gas (in moles):")
+        self.n_label = tk.Label(self.ideal_gas_window,text="Enter Amount of Gas (in moles):")
         self.n_label.grid(row=3,column=0)
         self.n_input = tk.StringVar()
-        self.n_entry = tk.Entry(root,textvariable=self.n_input,width=15)
+        self.n_entry = tk.Entry(self.ideal_gas_window,textvariable=self.n_input,width=15)
         self.n_entry.grid(row=3,column=1)
         amount_units = ('mol','kg','g','lb')
         self.n_unit = tk.StringVar()
-        self.n_units_options = tk.OptionMenu(root, self.n_unit,*amount_units)
+        self.n_units_options = tk.OptionMenu(self.ideal_gas_window, self.n_unit,*amount_units)
         self.n_units_options.config(width=8)
         self.n_units_options.grid(row=3,column=2)
         self.n_unit.set('mol')
 
 
         #Volume Input
-        self.V_label = tk.Label(text="Enter Volume of Gas (in Liters):")
+        self.V_label = tk.Label(self.ideal_gas_window,text="Enter Volume of Gas (in Liters):")
         self.V_label.grid(row=4,column=0)
         self.V_input = tk.StringVar()
-        self.V_entry = tk.Entry(root,textvariable=self.V_input,width=15)
+        self.V_entry = tk.Entry(self.ideal_gas_window,textvariable=self.V_input,width=15)
         self.V_entry.grid(row=4,column=1)
         volume_units = ('L','ft'+u'\u00b3','m'+u'\u00b3','cm'+u'\u00b3','gal')
         self.V_unit = tk.StringVar()
-        self.V_units_options = tk.OptionMenu(root, self.V_unit,*volume_units)
+        self.V_units_options = tk.OptionMenu(self.ideal_gas_window, self.V_unit,*volume_units)
         self.V_units_options.config(width=8)
         self.V_units_options.grid(row=4,column=2)
         self.V_unit.set('L')
         
         
         
-        self.compute = tk.Button(text='Compute Ideal Gas Law',command=self.Ideal_Gas)
+        self.compute = tk.Button(self.ideal_gas_window,text='Compute Ideal Gas Law',command=self.Ideal_Gas)
         self.compute.grid(row=5,column=0,columnspan=2)
 
 
@@ -161,10 +190,20 @@ class Principal(tk.Tk):
             tk.Label(self.nonnumeric_error_window,text="Error! Non-Numeric Entries Detected!").pack()
             tk.Label(self.nonnumeric_error_window,text="Use only numbers please.").pack()
             return
+
+
         if n_unit != 'mol':
             self.Molecular_Weight(n_unit)
+            root.wait_window(self.mass_window)
+            n_conversion = float(self.molecular_weight_input.get()) #
+            if n_unit == 'kg':
+                n_val = float(n) * .001 * n_conversion
+            if n_unit == 'g':
+                n_val = float(n) * n_conversion
+            if n_unit == 'lb':
+                n_val = float(n) * 453.592 * n_conversion
         else:
-            pass
+            n_val = n
 
         ##Pressure Defaults!
         if P_unit == 'atm':
@@ -199,7 +238,7 @@ class Principal(tk.Tk):
 
         ##Temperature Defaults!
         if T_unit == 'K':
-            pass #Default setting in this case!
+            pass
         if T_unit == 'R':
             T=float(T)*1.8
         if T_unit == u'\N{DEGREE SIGN}'+'C':
@@ -209,40 +248,44 @@ class Principal(tk.Tk):
             
             
         if n == '':
-            number_of_moles = (P*V/R_val*T)
+            number_of_moles = (float(P)*float(V)/R_val*float(T))
             self.n_entry.insert(0,round(number_of_moles,6))
         elif P == '':
-            Pressure=(float(n)*float(R_val)*float(T))/float(V)
+            Pressure=(float(n_val)*float(R_val)*float(T))/float(V)
             self.P_entry.insert(0,round(Pressure,6))
         elif T == '':
-            Temp = (float(P)*float(V))/(float(R_val)*float(n))
+            Temp = (float(P)*float(V))/(float(R_val)*float(n_val))
             self.T_entry.insert(0,round(Temp,6))
         elif V == '':
-            Volume = (float(n)*float(R_val)*float(T))/float(P)
+            Volume = (float(n_val)*float(R_val)*float(T))/float(P)
             self.V_entry.insert(0,round(Volume,6))
         else:
-            print("Error: Specify Variables!")
+            self.error_window = tk.Toplevel(root)
+            self.nonnumeric_error_window.title('Error')
+            tk.Label(self.nonnumeric_error_window,text="Error! Incorrect Entry Detected!").pack()
+            return
+
+
+    def calculate_vals(self,event):
+        self.gas_comp_list = list(gas_compounds)
+        self.molecular_weight_entry.delete(0,'end')
+        self.molecular_weight_entry.insert(0,str(gas_mass[self.gas_comp_list.index(self.molecular_id_input.get())]))
+
 
     def Molecular_Weight(self,n_unit): #Opens an additional window so that someone may enter molecular weight.
         self.mass_window = tk.Toplevel(root)
         self.mass_window.title('Molecular Weight ID')
-        self.molecular_weight_label = tk.Label(self.mass_window,text="Input Molecular Weight:")
+        self.molecular_weight_label = tk.Label(self.mass_window,text="Input Molecular Weight (g/mol):")
         self.molecular_weight_label.grid(row=0,column=0)
-        mweight_units = ('g/mol','kg/mol','lb/mol')
         self.molecular_weight_input = tk.StringVar()
         self.molecular_weight_entry = tk.Entry(self.mass_window,textvariable=self.molecular_weight_input,width=15)
+        self.molecular_weight_entry.insert(0,'18.02')        
         self.molecular_weight_entry.grid(row=0,column=1)
-        self.molecular_weight_units = tk.StringVar()
-        self.molecular_weight_options = tk.OptionMenu(self.mass_window,self.molecular_weight_units,*mweight_units)
-        self.molecular_weight_options.config(width=8)
-        self.molecular_weight_options.grid(row=0,column=2)
-        self.molecular_weight_units.set('g/mol')
         
         self.molecular_id_label = tk.Label(self.mass_window,text="Or Choose Gas:")
         self.molecular_id_label.grid(row=1,column=0)
         self.molecular_id_input = tk.StringVar()
-#        gas_compounds=("ttt") #COME BACK HERE!
-        self.molecular_id_options = tk.OptionMenu(self.mass_window,self.molecular_id_input,*gas_compounds)
+        self.molecular_id_options = tk.OptionMenu(self.mass_window,self.molecular_id_input,*gas_compounds,command=self.calculate_vals)
         self.molecular_id_options.config(width=25)
         self.molecular_id_options.grid(row=1,column=1,columnspan=2)
         self.molecular_id_input.set("Water Vapor (steam): H"+u"\u2082"+"O")
@@ -252,8 +295,62 @@ class Principal(tk.Tk):
         self.mweight_button.grid(row=2,column=0,columnspan=3)
 
 
-    def submit_molecular_weight(self):
-        print(self.molecular_weight_units.get())
+    #####################################################################################################################
+    ########################################## SATURATION PRESSURE CALCULATION ##########################################
+    #####################################################################################################################
+
+
+    def sat_pressure_calc(self):
+        return
+        
+
+    ####################################################################################################################
+    ############################################# EQUATION OF STATE SOLVER #############################################
+    ####################################################################################################################
+
+
+
+    def eos_solver(self):
+        return
+
+
+    #####################################################################################################################
+    ############################################ FUGACITY COEFFICIENT SOLVER ############################################
+    #####################################################################################################################
+
+        
+    def fug_coeff_solver(self):
+        return
+
+
+    #####################################################################################################################
+    ####################################### EXCESS GIBBS ENERGY PARAMETER FITTING #######################################
+    #####################################################################################################################
+
+
+        
+    def xs_gibbs(self):
+        return
+
+
+    #####################################################################################################################
+    ###################################### BUBBLE POINT AND DEW POINT CALCULATIONS ######################################
+    #####################################################################################################################
+
+    
+    def bubble_dew_point(self):
+        return
+
+    ####################################################################################################################
+    ########################################### CHEMICAL REACTION EQUILIBRIA ###########################################
+    ####################################################################################################################
+
+        
+    def chem_rxn_equil(self):
+        return
+
+
+
 app = Principal()
 root.mainloop()
 
