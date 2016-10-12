@@ -29,7 +29,7 @@ class Principal(tk.Tk):
     ####################################################################################################################
     ################################################# MAIN MENU LAYOUT #################################################
     ####################################################################################################################
-
+#This is a test comment.
 
     def __init__(self, *args, **kwargs):
         root.title("ThermoSolving Software")
@@ -339,6 +339,45 @@ class Principal(tk.Tk):
 
     
     def bubble_dew_point(self):
+        self.bubble_dew_point_window = tk.Toplevel(root)
+        self.bubble_dew_point_window.title('Bubble/Dew Point Calculations')
+
+        self.main_label_point = tk.Label(self.bubble_dew_point_window,
+                                         text='Choose the type of calculation you would like to make:')
+        self.main_label_point.grid(row=0,column=0,columnspan=3)
+        
+        self.bubble_point_label = tk.Label(self.bubble_dew_point_window,text='Bubble Point (Xi Known):')
+        self.bubble_point_label.grid(row=1,column=1)
+        
+        self.dew_point_label = tk.Label(self.bubble_dew_point_window,text='Dew Point (Yi Known):')
+        self.dew_point_label.grid(row=1,column=2)
+        
+        self.T_known = tk.Label(self.bubble_dew_point_window,text='T known:')
+        self.T_known.grid(row=2,column=0)
+
+        self.P_known = tk.Label(self.bubble_dew_point_window,text='P known:')
+        self.P_known.grid(row=3,column=0)
+        
+        self.dew_point_T_I = tk.Button(self.bubble_dew_point_window,text='Find Xi, P',command=self.find_I)
+        self.dew_point_T_I.grid(row=2,column=2)
+
+        self.dew_point_T_II = tk.Button(self.bubble_dew_point_window,text='Find Yi, P',command=self.find_II)
+        self.dew_point_T_II.grid(row=2,column=1)
+
+        self.dew_point_T_III = tk.Button(self.bubble_dew_point_window,text='Find Yi, T',command=self.find_III)
+        self.dew_point_T_III.grid(row=3,column=1)
+
+        self.dew_point_T_IV = tk.Button(self.bubble_dew_point_window,text='Find Xi, T',command=self.find_IV)
+        self.dew_point_T_IV.grid(row=3,column=2)
+
+        
+    def find_I(self):
+        return
+    def find_II(self):
+        return
+    def find_III(self):
+        return
+    def find_IV(self):
         return
 
     ####################################################################################################################
