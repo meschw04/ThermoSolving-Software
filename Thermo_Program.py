@@ -1,11 +1,4 @@
 
-# container, 29 ft high.
-# 25 feet of it is liquid benzene, sg~.875 g/cm
-# N2 occupies the rest, pressure is 300 psi. 1.02 atm ambient.
-# What is total absolute pressure?
-# Find pressure of weight of benzene, and gas with atmospheric pressure
-
-
 # P Table with masses.
 # SG Table
 # Water tables
@@ -17,7 +10,7 @@ import thermo_parse_files
 # PV = nRT
 R = .0820574614 #(L*atm)/(mol*K) are the units!
 
-gas_compounds = thermo_parse_files.parse_gas_compounds("/Users/mschwart/ThermoSolving-Software/Gas_Elements.csv")
+gas_compounds = thermo_parse_files.parse_gas_compounds("/Users/Marcus/ThermoSolving-Software/Gas_Elements.csv")
 #NOTE: Come back to this, you will eventually want to change this so that it doesn't have to take the file path.
 #This way, it can work on any computer and not just yours with the specific file path. Good luck!
 
